@@ -12,7 +12,7 @@ namespace CareTrack.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    
     public class ShiftsController : ControllerBase
     {
 
@@ -31,6 +31,7 @@ namespace CareTrack.API.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> Create([FromBody] AddShiftDto addShiftDto)
         {
             //Map DTO to domain model
@@ -67,6 +68,7 @@ namespace CareTrack.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> GetAll([FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
             // Get Data From database - Domain Models
@@ -84,6 +86,7 @@ namespace CareTrack.API.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var shiftDomainModel = await shiftRepository.GetByIdAsync(id);
@@ -101,6 +104,7 @@ namespace CareTrack.API.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateShiftDto updateShiftDto)
         {
 
@@ -139,6 +143,7 @@ namespace CareTrack.API.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var shiftDomainModel = await shiftRepository.DeleteAsync(id);

@@ -12,7 +12,7 @@ namespace CareTrack.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    
     public class ShiftAssignmentsController : ControllerBase
     {
 
@@ -29,6 +29,7 @@ namespace CareTrack.API.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> Create([FromBody] AddShiftAssignmentDto addShiftAssignmentDto)
         {
             //Map DTO to domain model
@@ -79,6 +80,7 @@ namespace CareTrack.API.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var shiftAssignmentDomainModel = await shiftAssignmentRepository.GetByIdAsync(id);
@@ -96,6 +98,7 @@ namespace CareTrack.API.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateShiftAssignmentDto updateShiftAssignmentDto)
         {
 
@@ -113,6 +116,7 @@ namespace CareTrack.API.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Super Admin,Admin")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var shiftAssignmentDomainModel = await shiftAssignmentRepository.DeleteAsync(id);
