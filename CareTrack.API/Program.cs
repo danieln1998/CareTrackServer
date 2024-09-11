@@ -94,6 +94,7 @@ builder.Services.AddScoped<IShiftRepository, SQLShiftRepository>();
 builder.Services.AddScoped<IShiftAssignmentRepository, SQLShiftAssignmentRepository>();
 builder.Services.AddScoped<IEmployeeShiftRepository, SQLEmployeeShiftRepository>();
 builder.Services.AddScoped<IEmployeeAttendanceCheckRepository, EmployeeAttendanceCheckRepository>();
+builder.Services.AddScoped<IRoomRepository, SQLRoomRepository>();
 
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));

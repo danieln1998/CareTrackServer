@@ -2,6 +2,7 @@
 using CareTrack.API.Models.DTO;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using CareTrack.API.Models.DTO.PatientsDTO;
 
 namespace CareTrack.API.Mappings
 {
@@ -28,7 +29,13 @@ namespace CareTrack.API.Mappings
             CreateMap<EmployeeShift, EmpolyeeIdDto>().ReverseMap();
 
             CreateMap<IdentityUser, UserDto>().ReverseMap();
-           
+
+            // Patients Mapping
+
+            CreateMap<Room, RoomDto>().ReverseMap();
+            CreateMap<AddRoomDto, Room>().ReverseMap();
+            CreateMap<UpdateRoomDto, Room>().ReverseMap();
+
 
         }
     }
