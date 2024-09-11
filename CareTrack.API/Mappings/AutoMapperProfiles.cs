@@ -36,6 +36,9 @@ namespace CareTrack.API.Mappings
             CreateMap<AddRoomDto, Room>().ReverseMap();
             CreateMap<UpdateRoomDto, Room>().ReverseMap();
 
+            CreateMap<Device, DeviceDto>().ReverseMap();
+            CreateMap<AddDeviceDto, Device>().ReverseMap();
+            CreateMap<UpdateDeviceDto, Device>().ReverseMap();
 
         }
     }
