@@ -97,6 +97,7 @@ builder.Services.AddScoped<IEmployeeAttendanceCheckRepository, EmployeeAttendanc
 builder.Services.AddScoped<IRoomRepository, SQLRoomRepository>();
 builder.Services.AddScoped<IDeviceRepository, SQLDeviceRepository>();
 builder.Services.AddScoped<IPatientRepository, SQLPatientRepository>();
+builder.Services.AddScoped<IAlertRepository, SQLAlertRepository>();
 
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
