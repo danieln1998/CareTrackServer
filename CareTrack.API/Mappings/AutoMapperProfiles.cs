@@ -40,6 +40,10 @@ namespace CareTrack.API.Mappings
             CreateMap<AddDeviceDto, Device>().ReverseMap();
             CreateMap<UpdateDeviceDto, Device>().ReverseMap();
 
+            CreateMap<Patient, PatientDto>().ReverseMap();
+            CreateMap<AddPatientDto, Patient>().ReverseMap();
+            CreateMap<UpdatePatientDto, Patient>().ReverseMap();
+
         }
     }
 }
