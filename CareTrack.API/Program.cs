@@ -1,6 +1,7 @@
 using CareTrack.API.Data;
 using CareTrack.API.Mappings;
 using CareTrack.API.Repositories;
+using CareTrack.API.Services;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -98,6 +99,9 @@ builder.Services.AddScoped<IRoomRepository, SQLRoomRepository>();
 builder.Services.AddScoped<IDeviceRepository, SQLDeviceRepository>();
 builder.Services.AddScoped<IPatientRepository, SQLPatientRepository>();
 builder.Services.AddScoped<IAlertRepository, SQLAlertRepository>();
+
+builder.Services.AddHttpClient();
+builder.Services.AddHostedService<ArduinoDataService>();
 
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));

@@ -25,13 +25,13 @@ namespace CareTrack.API.Data
                 .HasOne(p => p.Room)
                 .WithMany()
                 .HasForeignKey(p => p.RoomId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.SetNull); 
 
             modelBuilder.Entity<Patient>()
                 .HasOne(p => p.Device)
                 .WithMany()
                 .HasForeignKey(p => p.DeviceId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.SetNull); 
         }
 
 
