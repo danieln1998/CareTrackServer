@@ -41,11 +41,11 @@ namespace CareTrack.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Super Admin,Admin,User")]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
             // Get Data From database - Domain Models
 
-            var patientsDomain = await patientRepository.GetAllAsync(pageNumber, pageSize);
+            var patientsDomain = await patientRepository.GetAllAsync(filterOn, filterQuery,pageNumber, pageSize);
 
             // Map Domain Models to DTOs
             var patientsDto = mapper.Map<List<PatientDto>>(patientsDomain);

@@ -13,10 +13,19 @@ namespace CareTrack.API.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Patient>> GetAllAsync(int pageNumber = 1, int pageSize = 1000)
+        public async Task<List<Patient>> GetAllAsync(string? filterOn = null, string? filterQuery = null,int pageNumber = 1, int pageSize = 1000)
         {
             var patients = dbContext.Patients.Include("Room").Include("Device").AsQueryable();
-            // Pagination
+
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+            {
+                 if (filterOn.Equals("RoomId", StringComparison.OrdinalIgnoreCase))
+                {
+                    patients = patients.Where(p => p.Room.Id.ToString().Equals(filterQuery));
+                }
+            }
+
+             // Pagination
             var skipResults = (pageNumber - 1) * pageSize;
 
             return await patients.Skip(skipResults).Take(pageSize).ToListAsync();
