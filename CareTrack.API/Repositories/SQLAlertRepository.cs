@@ -13,7 +13,7 @@ namespace CareTrack.API.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Alert>> GetAllAsync(int pageNumber = 1, int pageSize = 1000)
+        public async Task<List<Alert>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
             var alerts = dbContext.Alerts
                  .Include(a => a.Patient)
@@ -21,6 +21,27 @@ namespace CareTrack.API.Repositories
                  .Include(a => a.Patient)
                       .ThenInclude(p => p.Device)
                 .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+            {
+                if (filterOn.Equals("PatientId", StringComparison.OrdinalIgnoreCase))
+                {
+                    alerts = alerts.Where(r => r.PatientId.ToString().Equals(filterQuery));
+
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(sortBy))
+            {
+                if (sortBy.Equals("Date", StringComparison.OrdinalIgnoreCase))
+                {
+                    alerts = isAscending
+                        ? alerts.OrderBy(sa => sa.Time)
+                        : alerts.OrderByDescending(sa => sa.Time);
+                }
+
+            }
+
             // Pagination
             var skipResults = (pageNumber - 1) * pageSize;
 
