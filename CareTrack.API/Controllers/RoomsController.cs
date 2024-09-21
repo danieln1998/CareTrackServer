@@ -7,6 +7,8 @@ using CareTrack.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace CareTrack.API.Controllers
@@ -29,15 +31,25 @@ namespace CareTrack.API.Controllers
         [Authorize(Roles = "Super Admin")]
         public async Task<IActionResult> Create([FromBody] AddRoomDto addRoomDto)
         {
-            //Map DTO to domain model
-            var roomDomainModel = mapper.Map<Room>(addRoomDto);
+            try
+            {
+                //Map DTO to domain model
+                var roomDomainModel = mapper.Map<Room>(addRoomDto);
 
-            await roomRepository.CreateAsync(roomDomainModel);
+                await roomRepository.CreateAsync(roomDomainModel);
 
-            //Map Domain Model to DTO
-            var roomDto = mapper.Map<RoomDto>(roomDomainModel);
-            return CreatedAtAction(nameof(GetById), new { id = roomDto.Id }, roomDto);
-
+                //Map Domain Model to DTO
+                var roomDto = mapper.Map<RoomDto>(roomDomainModel);
+                return CreatedAtAction(nameof(GetById), new { id = roomDto.Id }, roomDto);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
+                {
+                    return Conflict("The room number already exists in the system. Please choose another number.");
+                }
+                return StatusCode(500, "An error occurred while adding the room. Please try again later.");
+            }
         }
 
         [HttpGet]
@@ -80,17 +92,26 @@ namespace CareTrack.API.Controllers
         [Authorize(Roles = "Super Admin")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRoomDto updateRoomDto)
         {
-
-            var roomDomainModel = mapper.Map<Room>(updateRoomDto);
-            roomDomainModel = await roomRepository.UpdateAsync(id, roomDomainModel);
-
-            if (roomDomainModel == null)
+            try
             {
-                return NotFound();
+                var roomDomainModel = mapper.Map<Room>(updateRoomDto);
+                roomDomainModel = await roomRepository.UpdateAsync(id, roomDomainModel);
+
+                if (roomDomainModel == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(mapper.Map<RoomDto>(roomDomainModel));
             }
-
-            return Ok(mapper.Map<RoomDto>(roomDomainModel));
-
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
+                {
+                    return Conflict("The room number already exists in the system. Please choose another number.");
+                }
+                return StatusCode(500, "An error occurred while update the room. Please try again later.");
+            }
         }
 
         [HttpDelete]

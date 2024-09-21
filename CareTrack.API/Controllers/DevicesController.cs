@@ -6,6 +6,8 @@ using CareTrack.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace CareTrack.API.Controllers
 {
@@ -27,15 +29,25 @@ namespace CareTrack.API.Controllers
         [Authorize(Roles = "Super Admin")]
         public async Task<IActionResult> Create([FromBody] AddDeviceDto addDeviceDto)
         {
-            //Map DTO to domain model
-            var deviceDomainModel = mapper.Map<Device>(addDeviceDto);
+            try
+            {
+                //Map DTO to domain model
+                var deviceDomainModel = mapper.Map<Device>(addDeviceDto);
 
-            await deviceRepository.CreateAsync(deviceDomainModel);
+                await deviceRepository.CreateAsync(deviceDomainModel);
 
-            //Map Domain Model to DTO
-            var deviceDto = mapper.Map<DeviceDto>(deviceDomainModel);
-            return CreatedAtAction(nameof(GetById), new { id = deviceDto.Id }, deviceDto);
-
+                //Map Domain Model to DTO
+                var deviceDto = mapper.Map<DeviceDto>(deviceDomainModel);
+                return CreatedAtAction(nameof(GetById), new { id = deviceDto.Id }, deviceDto);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
+                {
+                    return Conflict("The device number already exists in the system. Please choose another number.");
+                }
+                return StatusCode(500, "An error occurred while adding the device. Please try again later.");
+            }
         }
 
         [HttpGet]
@@ -78,17 +90,26 @@ namespace CareTrack.API.Controllers
         [Authorize(Roles = "Super Admin")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDeviceDto updateDeviceDto)
         {
-
-            var deviceDomainModel = mapper.Map<Device>(updateDeviceDto);
-            deviceDomainModel = await deviceRepository.UpdateAsync(id, deviceDomainModel);
-
-            if (deviceDomainModel == null)
+            try
             {
-                return NotFound();
+                var deviceDomainModel = mapper.Map<Device>(updateDeviceDto);
+                deviceDomainModel = await deviceRepository.UpdateAsync(id, deviceDomainModel);
+
+                if (deviceDomainModel == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(mapper.Map<DeviceDto>(deviceDomainModel));
             }
-
-            return Ok(mapper.Map<DeviceDto>(deviceDomainModel));
-
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
+                {
+                    return Conflict("The device number already exists in the system. Please choose another number.");
+                }
+                return StatusCode(500, "An error occurred while update the device. Please try again later.");
+            }
         }
 
         [HttpDelete]
