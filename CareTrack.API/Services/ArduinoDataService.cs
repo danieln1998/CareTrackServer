@@ -41,7 +41,7 @@ namespace CareTrack.API.Services
                     var alertRepository = scope.ServiceProvider.GetRequiredService<IAlertRepository>(); 
                     var dbContext = scope.ServiceProvider.GetRequiredService<CareTrackDbcontext>(); 
 
-                    string url = "http://10.0.0.16:7155/index";
+                    string url = "http://10.0.0.12:7155/index";
                     HttpResponseMessage response = await _httpClient.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
